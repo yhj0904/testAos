@@ -22,10 +22,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.yhj.testAos" />
+                  <option name="mobileSdkAppId" value="1:995643671870:android:70691553a07b5d72bf986f" />
+                  <option name="projectId" value="testios-31951" />
+                  <option name="projectNumber" value="995643671870" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

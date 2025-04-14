@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace = "com.yhj.testaos"
+    namespace = "com.yhj.testAos"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.yhj.testaos"
+        applicationId = "com.yhj.testAos"
         minSdk = 31
         targetSdk = 35
         versionCode = 1
