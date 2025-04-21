@@ -12,7 +12,9 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.firebase.messaging.FirebaseMessaging
 import android.Manifest
+import android.graphics.Rect
 import android.view.View
+import android.view.ViewGroup
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -24,11 +26,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
-       /* ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            v.setPadding(0, systemBars.top, 0, 0)
             insets
-        }*/
+        }
 
         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
             if (task.isSuccessful) {
@@ -37,6 +39,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        val rootView = findViewById<View>(android.R.id.content)
         val webView = findViewById<WebView>(R.id.webview)
         webView.webViewClient = WebViewClient()
         webView.loadUrl("http://192.168.10.205")
@@ -48,6 +51,23 @@ class MainActivity : AppCompatActivity() {
         webView.setLayerType(View.LAYER_TYPE_HARDWARE, null)
         webView.requestFocus()
 
+        rootView.viewTreeObserver.addOnGlobalLayoutListener {
+            val r = Rect()
+            rootView.getWindowVisibleDisplayFrame(r)
+
+            val screenHeight = rootView.rootView.height
+            val keypadHeight = screenHeight - r.bottom
+
+            if (keypadHeight > screenHeight * 0.15) {
+                // 키보드 올라옴
+                webView.layoutParams.height = r.bottom
+                webView.requestLayout()
+            } else {
+                // 키보드 내려감
+                webView.layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
+                webView.requestLayout()
+            }
+        }
 
     }
     // Declare the launcher at the top of your Activity/Fragment:
