@@ -13,8 +13,8 @@ android {
         applicationId = "com.yhj.testaos"
         minSdk = 31
         targetSdk = 35
-        versionCode = 11
-        versionName = "1.1"
+        versionCode = 111
+        versionName = "1.1.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
