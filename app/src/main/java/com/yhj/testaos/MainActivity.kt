@@ -12,9 +12,14 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.firebase.messaging.FirebaseMessaging
 import android.Manifest
+import android.app.Activity
+import android.content.Intent
 import android.graphics.Rect
+import android.net.Uri
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.ValueCallback
+import android.webkit.WebChromeClient
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -22,6 +27,11 @@ import com.yhj.testaos.R
 
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var webView: WebView
+    private var filePathCallback: ValueCallback<Array<Uri>>? = null
+    private val FILE_CHOOSER_REQUEST_CODE = 1000
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -36,6 +46,25 @@ class MainActivity : AppCompatActivity() {
             if (task.isSuccessful) {
                 val token = task.result
                 Log.d("FCM", "현재 토큰: $token")
+            }
+        }
+
+        webView.webChromeClient = object : WebChromeClient() {
+            override fun onShowFileChooser(
+                webView: WebView?,
+                filePathCallback: ValueCallback<Array<Uri>>?,
+                fileChooserParams: FileChooserParams?
+            ): Boolean {
+                this@MainActivity.filePathCallback?.onReceiveValue(null)
+                this@MainActivity.filePathCallback = filePathCallback
+
+                val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
+                    addCategory(Intent.CATEGORY_OPENABLE)
+                    type = "*/*"
+                    putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+                }
+                startActivityForResult(Intent.createChooser(intent, "파일 선택"), FILE_CHOOSER_REQUEST_CODE)
+                return true
             }
         }
 
@@ -68,8 +97,28 @@ class MainActivity : AppCompatActivity() {
                 webView.requestLayout()
             }
         }
-
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == FILE_CHOOSER_REQUEST_CODE) {
+            var results: Array<Uri>? = null
+
+            if (resultCode == Activity.RESULT_OK) {
+                if(data?. clipData != null) {
+                    val count = data.clipData!!.itemCount
+                    results = Array(count) {i -> data.clipData!!.getItemAt(i).uri}
+                } else if (data?.data != null ){
+                    results = arrayOf(data.data!!)
+                }
+            }
+
+            filePathCallback?.onReceiveValue(results)
+            filePathCallback = null
+        }
+    }
+
     // Declare the launcher at the top of your Activity/Fragment:
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission(),
