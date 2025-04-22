@@ -49,6 +49,11 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+
+
+        val rootView = findViewById<View>(android.R.id.content)
+        this.webView = findViewById<WebView>(R.id.webView)
+
         webView.webChromeClient = object : WebChromeClient() {
             override fun onShowFileChooser(
                 webView: WebView?,
@@ -68,8 +73,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        val rootView = findViewById<View>(android.R.id.content)
-        val webView = findViewById<WebView>(R.id.webview)
         webView.webViewClient = WebViewClient()
         webView.loadUrl("http://192.168.10.205")
         webView.getSettings().setUseWideViewPort(true);
